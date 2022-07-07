@@ -1,18 +1,29 @@
-import Card, { CardVariant } from './components/Card';
+import axios from 'axios';
+import { useEffect, useState } from 'react';
+import UserList from './components/UserList';
+import { IUser } from './types/user';
 
 function App() {
-  const handleOnClick = () => alert('onClick');
+  const [users, setUsers] = useState<IUser[] | null>(null);
+
+  useEffect(() => {
+    fetchUsers();
+  }, [users]);
+
+  async function fetchUsers() {
+    try {
+      const response = await axios.get<IUser[]>(
+        'https://jsonplaceholder.typicode.com/users'
+      );
+      setUsers(response.data);
+    } catch (error) {
+      alert(error);
+    }
+  }
 
   return (
     <div>
-      <Card
-        width="200px"
-        height="200px"
-        variant={CardVariant.outlined}
-        onclick={handleOnClick}
-      >
-        <div>Потомок</div>
-      </Card>
+      <UserList users={users} />
     </div>
   );
 }
